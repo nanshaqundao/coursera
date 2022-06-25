@@ -1,31 +1,36 @@
 package edu.coursera.concurrent.guardedblock;
 
 import java.util.Random;
+import java.util.logging.Logger;
 
 public class Producer implements Runnable {
-    private Drop drop;
 
-    public Producer(Drop drop) {
-        this.drop = drop;
+    private final Logger logger = Logger.getLogger("Producer Logger");
+    private DropBox dropBox;
+
+    public Producer(DropBox dropBox){
+        this.dropBox = dropBox;
     }
-
     public void run() {
-        String importantInfo[] = {
-                "Mares eat oats",
-                "Does eat oats",
-                "Little lambs eat ivy",
-                "A kid will eat ivy too"
+        logger.info("Producer thread starts to run...");
+        String[] rawMessages = {
+                "Today is Saturday",
+                "Tomorrow is Sunday",
+                "Yesterday was Friday",
+                "Have a good day"
         };
-        Random random = new Random();
 
-        for (int i = 0;
-             i < importantInfo.length;
-             i++) {
-            drop.put(importantInfo[i]);
-            try {
-                Thread.sleep(random.nextInt(5000));
-            } catch (InterruptedException e) {}
+        for(int i = 0; i< rawMessages.length; i++){
+            logger.info("Producer thread ready to put: " + i);
+            dropBox.put(rawMessages[i]);
+            try{
+                logger.info("Producer thread to sleep for random time");
+                Thread.sleep(new Random().nextInt(5000));
+            }catch (InterruptedException e){
+                System.out.println(e.getMessage());
+            }
         }
-        drop.put("DONE");
+
+        dropBox.put("Done");
     }
 }

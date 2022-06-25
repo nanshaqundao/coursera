@@ -2,8 +2,14 @@ package edu.coursera.concurrent.guardedblock;
 
 public class Main {
     public static void main(String[] args) {
-        Drop drop = new Drop();
-        (new Thread(new Producer(drop))).start();
-        (new Thread(new Consumer(drop))).start();
+        DropBox dropBox = new DropBox();
+        Producer producer = new Producer(dropBox);
+        Consumer consumer = new Consumer(dropBox);
+
+        Thread producerThread = new Thread(producer);
+        Thread consumerThread = new Thread(consumer);
+
+        producerThread.start();
+        consumerThread.start();
     }
 }
