@@ -1,2 +1,4 @@
-package atomic;public class Demo {
+package atomic;
+
+public class Demo {
 }
