@@ -22,8 +22,8 @@ public final class SieveActor extends Sieve {
      */
     @Override
     public int countPrimes(final int limit) {
-        if(limit <= 1) return 0;
-        if(limit == 2) return 1;
+        if (limit <= 1) return 0;
+        if (limit == 2) return 1;
 
         SieveActorActor actor = new SieveActorActor(2);
         finish(() -> {
@@ -35,7 +35,7 @@ public final class SieveActor extends Sieve {
 
         int countOfActors = 1;
         SieveActorActor countPointer = actor.getNext();
-        while (countPointer!=null){
+        while (countPointer != null) {
             countOfActors = countOfActors + 1;
             countPointer = countPointer.getNext();
         }
@@ -48,11 +48,12 @@ public final class SieveActor extends Sieve {
      */
     public static final class SieveActorActor extends Actor {
 
-        private Integer candidatePrime;
+        private Integer actorPrime;
         private SieveActorActor next;
 
-        public SieveActorActor(Integer candidatePrime) {
-            this.candidatePrime = candidatePrime;
+        public SieveActorActor(Integer actorPrime) {
+            System.out.println("Actor " + actorPrime + " created");
+            this.actorPrime = actorPrime;
             next = null;
         }
 
@@ -70,7 +71,7 @@ public final class SieveActor extends Sieve {
         @Override
         public void process(final Object msg) {
             final Integer candidate = (Integer) msg;
-            //
+            // for any non-positive input, either return or ask the next actor to process
             if (candidate <= 0) {
                 if (next != null) {
                     next.send(msg);
@@ -78,13 +79,15 @@ public final class SieveActor extends Sieve {
                     return;
                 }
             }
+            // we only need to check if the current value process
+            boolean isCandidatePrime = isLocalPrime(candidate);
+            if (isCandidatePrime) {
+                System.out.println("Actor " + actorPrime + " ----- processing candidate: " + candidate);
 
-            boolean candidateIsLocalPrime = isLocalPrime(candidate);
-            if (candidateIsLocalPrime){
-                if(next == null){
+                if (next == null) {
                     next = new SieveActorActor(candidate);
 //                    System.out.println("prime number: " + candidate);
-                }else {
+                } else {
                     next.send(candidate);
                 }
             }
@@ -92,8 +95,8 @@ public final class SieveActor extends Sieve {
 
         }
 
-        private boolean isLocalPrime(Integer candidate){
-            return candidate % candidatePrime != 0;
+        private boolean isLocalPrime(Integer candidate) {
+            return candidate % actorPrime != 0;
         }
     }
 }
